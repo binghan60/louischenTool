@@ -93,9 +93,14 @@ function calculateCombinations() {
 	});
 
 	// 顯示結果
+	console.log(results);
 	const resultsDiv = document.getElementById('results');
-	const bestAnswer = results[0];
-	const bestTotal = bestAnswer.reduce((a, b) => a + b.length, 0);
+	let bestAnswer = '';
+	let bestTotal = '';
+	if (results[0]) {
+		bestAnswer = results[0];
+		bestTotal = bestAnswer.reduce((a, b) => a + b.length, 0);
+	}
 	console.log(bestAnswer);
 	console.log(bestTotal);
 
@@ -161,6 +166,6 @@ function calculateCombinations() {
                         </div>`;
 				})
 				.join('')
-		: '<p>沒有符合條件的組合。</p>';
+		: '<h2 class="text-center text-2xl">沒有符合條件的組合。</p>';
 	// document.querySelector('#submit').innerHTML = '計算';
 }
