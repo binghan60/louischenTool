@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<title>連續壁單元計算器</title>
+		<style>
+			input[type='number']::-webkit-outer-spin-button,
+			input[type='number']::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			input[type='number'] {
+				-moz-appearance: textfield;
+				appearance: none;
+			}
+		</style>
+	</head>
+	<body class="bg-blue-50 min-h-screen flex justify-center items-center">
+		<div class="w-full max-w-7xl bg-white shadow-md rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+			<!-- Form Section -->
+			<div>
+				<h1 class="text-2xl font-bold text-center text-blue-500 mb-6">連續壁單元計算</h1>
+				<form id="unitForm" class="space-y-4">
+					<div>
+						<label class="block text-blue-600 font-medium mb-1">公單元長度（開始長度與結束長度）：</label>
+						<div class="flex space-x-2">
+							<input type="number" id="maleUnitStart" placeholder="開始長度" value="10" class="w-1/2 px-3 py-2 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+							<input type="number" id="maleUnitEnd" placeholder="結束長度" value="30" class="w-1/2 px-3 py-2 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+						</div>
+					</div>
+
+					<div>
+						<label class="block text-blue-600 font-medium mb-1">母單元長度（用逗號分隔）：</label>
+						<input type="text" id="femaleUnitLengths" placeholder="例如：20,40" value="20,40" class="w-full px-3 py-2 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+					</div>
+
+					<div>
+						<label class="block text-blue-600 font-medium mb-1">公母單元長度（用逗號分隔）：</label>
+						<input type="text" id="bothUnitLengths" placeholder="例如：5,10" value="5,10" class="w-full px-3 py-2 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+					</div>
+
+					<div>
+						<label class="block text-blue-600 font-medium mb-1">總長度：</label>
+						<input type="number" id="totalLength" placeholder="例如：100" value="100" class="w-full px-3 py-2 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+					</div>
+
+					<div>
+						<label class="block text-blue-600 font-medium mb-3">第一個單元：</label>
+						<div class="flex space-x-4">
+							<label>
+								<input type="radio" name="unitTypeFirst" value="公單元" class="hidden peer" />
+								<span class="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg border border-blue-300 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition"> 公單元 </span>
+							</label>
+							<label>
+								<input type="radio" name="unitTypeFirst" value="母單元" class="hidden peer" />
+								<span class="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg border border-blue-300 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition"> 母單元 </span>
+							</label>
+							<label>
+								<input type="radio" name="unitTypeFirst" value="公母單元" class="hidden peer" />
+								<span class="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg border border-blue-300 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition"> 公母單元 </span>
+							</label>
+						</div>
+					</div>
+
+					<div class="pb-3">
+						<label class="block text-blue-600 font-medium mb-3">最後一個單元：</label>
+						<div class="flex space-x-4">
+							<label>
+								<input type="radio" name="unitTypeLast" value="公單元" class="hidden peer" />
+								<span class="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg border border-blue-300 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition"> 公單元 </span>
+							</label>
+							<label>
+								<input type="radio" name="unitTypeLast" value="母單元" class="hidden peer" />
+								<span class="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg border border-blue-300 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition"> 母單元 </span>
+							</label>
+							<label>
+								<input type="radio" name="unitTypeLast" value="公母單元" class="hidden peer" />
+								<span class="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg border border-blue-300 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition"> 公母單元 </span>
+							</label>
+						</div>
+					</div>
+
+					<button type="button" onclick="calculateCombinations()" class="w-full bg-blue-400 hover:bg-blue-500 text-white py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">計算</button>
+				</form>
+			</div>
+
+			<!-- Results Section -->
+			<div>
+				<h2 class="text-2xl font-bold text-center text-blue-500 mb-6">結果</h2>
+
+				<div id="results" class="mt-2 text-gray-700"></div>
+			</div>
+		</div>
+
+		<script src="js/script.js"></script>
+	</body>
+</html>
