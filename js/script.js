@@ -7,12 +7,11 @@ function generateRange(start, end) {
 }
 
 function calculateCombinations() {
-	// 取得輸入的值並轉換為數字陣列
-	// document.querySelector('#submit').innerHTML = '<i class="fa-solid fa-hourglass-start"></i>';
+	console.log('A');
+	document.getElementById('results').innerHTML = '計算中...';
 	const maleUnitStart = parseInt(document.getElementById('maleUnitStart').value);
 	const maleUnitEnd = parseInt(document.getElementById('maleUnitEnd').value);
 	const maleUnits = generateRange(maleUnitStart, maleUnitEnd);
-
 	const femaleUnits = document.getElementById('femaleUnitLengths').value.split(',').map(Number);
 	const bothUnits = document.getElementById('bothUnitLengths').value.split(',').map(Number);
 	const totalLength = parseInt(document.getElementById('totalLength').value);
@@ -28,6 +27,7 @@ function calculateCombinations() {
 
 	// 簡單的遞歸函數
 	function findCombination(currentCombo, currentLength, lastUnitType, allowBoth) {
+		console.log('findCombination');
 		// 如果達到總長度，檢查第一個和最後一個單元
 		if (currentLength === totalLength) {
 			if ((firstUnit === '公單元' && currentCombo[0]?.type !== '公單元') || (firstUnit === '母單元' && currentCombo[0]?.type !== '母單元') || (firstUnit === '公母單元' && currentCombo[0]?.type !== '公母單元') || (lastUnit === '公單元' && currentCombo[currentCombo.length - 1]?.type !== '公單元') || (lastUnit === '母單元' && currentCombo[currentCombo.length - 1]?.type !== '母單元') || (lastUnit === '公母單元' && currentCombo[currentCombo.length - 1]?.type !== '公母單元')) {
@@ -60,7 +60,6 @@ function calculateCombinations() {
 			});
 		}
 	}
-
 	// 根據選擇的第一個單元開始遞歸
 	if (firstUnit === '公單元') {
 		maleUnits.forEach((unit) => {
@@ -91,81 +90,59 @@ function calculateCombinations() {
 
 		return sumA - sumB; // 總長度少的排前面
 	});
-
-	// 顯示結果
 	console.log(results);
-	const resultsDiv = document.getElementById('results');
+	// 顯示結果
 	let bestAnswer = '';
 	let bestTotal = '';
 	if (results[0]) {
 		bestAnswer = results[0];
 		bestTotal = bestAnswer.reduce((a, b) => a + b.length, 0);
 	}
-	console.log(bestAnswer);
-	console.log(bestTotal);
 
-	resultsDiv.innerHTML = results.length
+	document.getElementById('results').innerHTML = results.length
 		? results
 				.slice(0, 10)
 				.map((combo, index) => {
-					if (index == 0) {
-						return `<div class="mb-4 p-4 border-b border-gray-300">
-                                    <p class="font-semibold text-blue-600 mb-2">組合${index + 1}：</p>
-                                    <div class="space-y-2">
-                                    ${combo
-										.map(
-											(unit) => `
-                                        <div class="flex items-center">
-                                            <span class="font-medium text-blue-500 mr-2">${unit.type}</span>
-                                            <span class="text-gray-700">${unit.length}</span>
-                                        </div>`
-										)
-										.join('')}
-                                    </div>
-                                    <div id="chart" class="flex w-full h-10 bg-gray-200 rounded-lg mt-3">${bestAnswer
-										.map((x, index) => {
-											let color = '';
-											let percent = (x.length / bestTotal) * 100;
-											console.log(percent);
-											if (x.type == '公單元') {
-												color = 'blue';
-											}
-											if (x.type == '母單元') {
-												color = 'pink';
-											}
-											if (x.type == '公母單元') {
-												color = 'purple';
-											}
-											// 对第一个和最后一个条形图做样式处理
-											if (index == 0) {
-												return `<div class="h-full bg-${color}-300 rounded-l-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
-											}
-											if (index == bestAnswer.length - 1) {
-												return `<div class="h-full bg-${color}-300 rounded-r-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
-											}
+					return `<div class="mb-4 p-4 border-b border-gray-300">
+                                <p class="font-semibold text-blue-600 mb-2">組合${index + 1}：</p>
+                                <div class="space-y-2">
+                                ${combo
+									.map(
+										(unit) => `
+                                    <div class="flex items-center">
+                                        <span class="font-medium text-blue-500 mr-2">${unit.type}</span>
+                                        <span class="text-gray-700">${unit.length}</span>
+                                    </div>`
+									)
+									.join('')}
+                                </div>
+                                <div id="chart" class="flex w-full h-10 bg-gray-200 rounded-lg mt-3">${bestAnswer
+									.map((x, index) => {
+										let color = '';
+										let percent = (x.length / bestTotal) * 100;
+										console.log(percent);
+										if (x.type == '公單元') {
+											color = 'blue';
+										}
+										if (x.type == '母單元') {
+											color = 'pink';
+										}
+										if (x.type == '公母單元') {
+											color = 'purple';
+										}
+										// 对第一个和最后一个条形图做样式处理
+										if (index == 0) {
+											return `<div class="h-full bg-${color}-300 rounded-l-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
+										}
+										if (index == bestAnswer.length - 1) {
+											return `<div class="h-full bg-${color}-300 rounded-r-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
+										}
 
-											return `<div class="h-full bg-${color}-300 flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
-										})
-										.join('')}</div>
-                                </div>`;
-					}
-					return `
-                        <div class="mb-4 p-4 border-b border-gray-300">
-                            <p class="font-semibold text-blue-600 mb-2">組合${index + 1}：</p>
-                            <div class="space-y-2">
-                            ${combo
-								.map(
-									(unit) => `
-                                <div class="flex items-center">
-                                    <span class="font-medium text-blue-500 mr-2">${unit.type}</span>
-                                    <span class="text-gray-700">${unit.length}</span>
-                                </div>`
-								)
-								.join('')}
-                            </div>
-                        </div>`;
+										return `<div class="h-full bg-${color}-300 flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
+									})
+									.join('')}</div>
+                            </div>`;
 				})
 				.join('')
 		: '<h2 class="text-center text-2xl">沒有符合條件的組合。</p>';
-	// document.querySelector('#submit').innerHTML = '計算';
 }
