@@ -23,11 +23,11 @@ function calculateCombinations() {
 	// 簡單的遞歸函數
 	function findCombination(currentCombo, currentLength, lastUnitType, allowBoth) {
 		// 如果達到總長度，檢查第一個和最後一個單元
+		console.log(currentCombo);
 		if (currentLength === totalLength) {
 			if ((firstUnit === '公單元' && currentCombo[0]?.type !== '公單元') || (firstUnit === '母單元' && currentCombo[0]?.type !== '母單元') || (firstUnit === '公母單元' && currentCombo[0]?.type !== '公母單元') || (lastUnit === '公單元' && currentCombo[currentCombo.length - 1]?.type !== '公單元') || (lastUnit === '母單元' && currentCombo[currentCombo.length - 1]?.type !== '母單元') || (lastUnit === '公母單元' && currentCombo[currentCombo.length - 1]?.type !== '公母單元')) {
 				return; // 如果不符合條件則停止
 			}
-			console.log(results[0]);
 			results.push([...currentCombo]); // 儲存符合條件的組合
 			return;
 		}
@@ -65,17 +65,13 @@ function calculateCombinations() {
 			findCombination([{ type: '公母單元', length: unit }], unit, '公母單元', true);
 		});
 	}
-	// 排序結果：先根據單元數量，然後再根據總長度
+	// 排序結果：根據單元數量
 	results.sort((a, b) => {
 		const lengthA = a.length;
 		const lengthB = b.length;
 		if (lengthA !== lengthB) {
 			return lengthA - lengthB; // 單元數量少的排前面
 		}
-		// 如果單元數量相同，根據總長度排序
-		const sumA = a.reduce((sum, unit) => sum + unit.length, 0);
-		const sumB = b.reduce((sum, unit) => sum + unit.length, 0);
-		return sumA - sumB; // 總長度少的排前面
 	});
 
 	document.getElementById('results').innerHTML = results.length
