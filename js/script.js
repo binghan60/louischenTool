@@ -23,7 +23,6 @@ function calculateCombinations() {
 	// 簡單的遞歸函數
 	function findCombination(currentCombo, currentLength, lastUnitType, allowBoth) {
 		// 如果達到總長度，檢查第一個和最後一個單元
-		console.log(currentCombo);
 		if (currentLength === totalLength) {
 			if ((firstUnit === '公單元' && currentCombo[0]?.type !== '公單元') || (firstUnit === '母單元' && currentCombo[0]?.type !== '母單元') || (firstUnit === '公母單元' && currentCombo[0]?.type !== '公母單元') || (lastUnit === '公單元' && currentCombo[currentCombo.length - 1]?.type !== '公單元') || (lastUnit === '母單元' && currentCombo[currentCombo.length - 1]?.type !== '母單元') || (lastUnit === '公母單元' && currentCombo[currentCombo.length - 1]?.type !== '公母單元')) {
 				return; // 如果不符合條件則停止
