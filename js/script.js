@@ -5,9 +5,7 @@ function generateRange(start, end) {
 	}
 	return range;
 }
-
 function calculateCombinations() {
-	console.log('A');
 	document.getElementById('results').innerHTML = '計算中...';
 	const maleUnitStart = parseInt(document.getElementById('maleUnitStart').value);
 	const maleUnitEnd = parseInt(document.getElementById('maleUnitEnd').value);
@@ -17,42 +15,35 @@ function calculateCombinations() {
 	const totalLength = parseInt(document.getElementById('totalLength').value);
 	const firstUnit = document.querySelector('input[name=unitTypeFirst]:checked').value;
 	const lastUnit = document.querySelector('input[name=unitTypeLast]:checked').value;
-
 	if (isNaN(totalLength) || totalLength <= 0) {
 		alert('請輸入有效的總長度！');
 		return;
 	}
-
 	const results = [];
-
 	// 簡單的遞歸函數
 	function findCombination(currentCombo, currentLength, lastUnitType, allowBoth) {
-		console.log('findCombination');
 		// 如果達到總長度，檢查第一個和最後一個單元
 		if (currentLength === totalLength) {
 			if ((firstUnit === '公單元' && currentCombo[0]?.type !== '公單元') || (firstUnit === '母單元' && currentCombo[0]?.type !== '母單元') || (firstUnit === '公母單元' && currentCombo[0]?.type !== '公母單元') || (lastUnit === '公單元' && currentCombo[currentCombo.length - 1]?.type !== '公單元') || (lastUnit === '母單元' && currentCombo[currentCombo.length - 1]?.type !== '母單元') || (lastUnit === '公母單元' && currentCombo[currentCombo.length - 1]?.type !== '公母單元')) {
 				return; // 如果不符合條件則停止
 			}
+			console.log(results[0]);
 			results.push([...currentCombo]); // 儲存符合條件的組合
 			return;
 		}
-
 		if (currentLength > totalLength) return; // 超過長度則停止
-
 		// 加入公單元
 		if (lastUnitType !== '公單元') {
 			maleUnits.forEach((unit) => {
 				findCombination([...currentCombo, { type: '公單元', length: unit }], currentLength + unit, '公單元', true);
 			});
 		}
-
 		// 加入母單元
 		if (lastUnitType !== '母單元') {
 			femaleUnits.forEach((unit) => {
 				findCombination([...currentCombo, { type: '母單元', length: unit }], currentLength + unit, '母單元', true);
 			});
 		}
-
 		// 加入公母單元
 		if (allowBoth && (lastUnitType === '公單元' || lastUnitType === '母單元')) {
 			bothUnits.forEach((unit) => {
@@ -74,30 +65,18 @@ function calculateCombinations() {
 			findCombination([{ type: '公母單元', length: unit }], unit, '公母單元', true);
 		});
 	}
-
 	// 排序結果：先根據單元數量，然後再根據總長度
 	results.sort((a, b) => {
 		const lengthA = a.length;
 		const lengthB = b.length;
-
 		if (lengthA !== lengthB) {
 			return lengthA - lengthB; // 單元數量少的排前面
 		}
-
 		// 如果單元數量相同，根據總長度排序
 		const sumA = a.reduce((sum, unit) => sum + unit.length, 0);
 		const sumB = b.reduce((sum, unit) => sum + unit.length, 0);
-
 		return sumA - sumB; // 總長度少的排前面
 	});
-	console.log(results);
-	// 顯示結果
-	let bestAnswer = '';
-	let bestTotal = '';
-	if (results[0]) {
-		bestAnswer = results[0];
-		bestTotal = bestAnswer.reduce((a, b) => a + b.length, 0);
-	}
 
 	document.getElementById('results').innerHTML = results.length
 		? results
@@ -116,11 +95,10 @@ function calculateCombinations() {
 									)
 									.join('')}
                                 </div>
-                                <div id="chart" class="flex w-full h-10 bg-gray-200 rounded-lg mt-3">${bestAnswer
+                                <div id="chart" class="flex w-full h-10 bg-gray-200 rounded-lg mt-3">${combo
 									.map((x, index) => {
 										let color = '';
-										let percent = (x.length / bestTotal) * 100;
-										console.log(percent);
+										let percent = Math.ceil((x.length / totalLength) * 100);
 										if (x.type == '公單元') {
 											color = 'blue';
 										}
@@ -130,15 +108,13 @@ function calculateCombinations() {
 										if (x.type == '公母單元') {
 											color = 'purple';
 										}
-										// 对第一个和最后一个条形图做样式处理
 										if (index == 0) {
-											return `<div class="h-full bg-${color}-300 rounded-l-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
+											return `<div class="h-full bg-${color}-300 rounded-l-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${x.length}</div>`;
 										}
-										if (index == bestAnswer.length - 1) {
-											return `<div class="h-full bg-${color}-300 rounded-r-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
+										if (index == combo.length - 1) {
+											return `<div class="h-full bg-${color}-300 rounded-r-lg flex justify-center items-center text-gray-600" style="width: ${percent}%">${x.length}</div>`;
 										}
-
-										return `<div class="h-full bg-${color}-300 flex justify-center items-center text-gray-600" style="width: ${percent}%">${percent}%</div>`;
+										return `<div class="h-full bg-${color}-300 flex justify-center items-center text-gray-600" style="width: ${percent}%">${x.length}</div>`;
 									})
 									.join('')}</div>
                             </div>`;
